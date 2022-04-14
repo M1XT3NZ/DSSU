@@ -18,7 +18,7 @@ namespace Steam
 
         public static Server CSERVER(string serverIP)
         {
-            var info = Steam.IGameServersService.GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={API_KEY}&filter=\gameaddr\{serverIP}&limit=6320").First();
+            var info = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={API_KEY}&filter=\gameaddr\{serverIP}&limit=6320").First();
             Server server = new Server()
             {
                 players = info.players,
@@ -55,7 +55,9 @@ namespace Steam
 
     public class Server
     {
+        //Need to make this look nicer
         public string addr { get; set; }
+
         public ushort port { get; set; }
         public string steamid { get; set; }
         public string name { get; set; }
@@ -75,7 +77,7 @@ namespace Steam
 
         public override string ToString()
         {
-            return name + " (" + addr + ")";
+            return name;
         }
     }
 }
