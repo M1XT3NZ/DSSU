@@ -12,23 +12,22 @@ namespace DSSU // Note: actual namespace depends on the project name.
         private ObservableCollection<Task> tasks = new ObservableCollection<Task>();
         private DiscordSocketClient _client;
         private CommandService _commands;
-        private Timer _timer;
+        private Timer? _timer;
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
         public async Task MainAsync()
-
         {
-            //5 minutes = 300000
-
             var autoEvent = new AutoResetEvent(false);
+
+            //5 minutes = 300000
             _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _client.Log += Log;
             _commands.Log += Log;
 
-            var token = "YOUR_DISCORD_BOT_TOKEN";
+            var token = "YOUR_BOT_TOKEN";
 
             await InstallCommandsAsync();
 

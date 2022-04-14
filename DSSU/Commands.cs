@@ -7,8 +7,11 @@ using SteamQueryNet.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DSSU
@@ -24,6 +27,8 @@ namespace DSSU
             string ServerIP, string ServerInformation = ""
            )
         {
+            if (Context.Channel.Id != 829380382104617050 || Context.Channel.Id != 964301577877864509)
+                return;
             if (ServerIP == null)
                 return;
             if (string.IsNullOrEmpty(ServerInformation))
@@ -33,16 +38,18 @@ namespace DSSU
 
             embed = Builder(embed, info, serverIP);
 
-            var builder = new ComponentBuilder()
-                .WithButton("Start DAYZ", style: ButtonStyle.Link, url: "steam://rungameid/427520");
+            // var builder = new ComponentBuilder()
+            //     .WithButton("Start DAYZ", style: ButtonStyle.Link, url: "steam://rungameid/427520");
 
-            var t = await ReplyAsync(embed: embed.Build(), components: builder.Build());
+            var t = await ReplyAsync(embed: embed.Build()/*, components: builder.Build()*/);
+
             DiscordMessages ms = new DiscordMessages()
             {
                 EmbedBuilder = embed,
                 Info = info,
                 IP = serverIP,
             };
+
             mymessages.Add(t, ms);
         }
 

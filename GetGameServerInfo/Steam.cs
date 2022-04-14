@@ -6,7 +6,7 @@ namespace Steam
     public class IGameServersService
     {
         //Steam Web API Key: https://steamcommunity.com/dev/apikey
-        private static string API_KEY = "YOUR_API_KEY";
+        private static string API_KEY = "YOUR_WEB_API_KEY";
 
         public static Server[] GetServerList(string url)
         {
