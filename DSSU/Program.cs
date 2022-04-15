@@ -7,17 +7,19 @@ using System.Reflection;
 
 namespace DSSU // Note: actual namespace depends on the project name.
 {
-    internal class Program
+    public class Program
     {
         private ObservableCollection<Task> tasks = new ObservableCollection<Task>();
         private DiscordSocketClient _client;
         private CommandService _commands;
         private Timer? _timer;
+        public static DateTime dt;
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
         public async Task MainAsync()
         {
+            dt = DateTime.Now;
             var autoEvent = new AutoResetEvent(false);
             if (!XmlHelper.DoesSettingsFileExist())
             {
