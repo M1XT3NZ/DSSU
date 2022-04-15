@@ -10,10 +10,10 @@ DSSU is a a very bad name for a Bot that updates the Server data and shows them 
 
 ## Instructions on Configuring the Bot
 
-### 1. Go into Program.cs and Steam.cs and Fill out the Bot Token and Steam API Key
-### 2. Compile the program
-### 3. Then add the your Bot to the Server
-### 4. Type !ServerInfo <IP> for the server you want to show an embed for
+### 1. Compile the program
+### 2. Then add the your Bot to the Server
+### 3. Start the bot and follow the instructions
+### 3. Type !ServerInfo <IP> for the server you want to show an embed for
   
 
 
