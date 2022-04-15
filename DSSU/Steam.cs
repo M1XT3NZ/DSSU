@@ -15,9 +15,15 @@ namespace Steam
             return servers.response.servers;
         }
 
-        public static Server CSERVER(string serverIP)
+        public static Server? CSERVER(string serverIP)
         {
-            var info = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={DSSU.XmlHelper.STEAM_API_KEY}&filter=\gameaddr\{serverIP}&limit=6320").First();
+            var servers = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=A1CC5E94A57074780CE9DA8D3F7AD829&filter=\gameaddr\{serverIP}&limit=6320");
+
+            if (servers == null)
+                return null;
+            var info = servers.FirstOrDefault();
+
+            if (info == null) return null;
             Server server = new Server()
             {
                 players = info.players,

@@ -22,6 +22,9 @@ namespace DSSU
 
         public static Dictionary<IUserMessage, DiscordMessages> mymessages = new Dictionary<IUserMessage, DiscordMessages>();
 
+        private static Steam.Server? Info = new Steam.Server();
+        private static String? ServerIP;
+
         [Command("ServerInfo")]
         public async Task MServerInfoAsync(
             string ServerIP
@@ -33,9 +36,21 @@ namespace DSSU
             if (ServerIP == null)//Could do both in the same line but looks cleaner imo
                 return;
             var serverIP = ServerIP.Trim();
-            var info = Steam.IGameServersService.CSERVER(ServerIP);
 
-            embed = Builder(embed, info, serverIP);
+            if (Steam.IGameServersService.CSERVER(ServerIP) == null)
+            {
+                Info = new Steam.Server()
+                {
+                    name = "Offline",
+                    players = 0,
+                    max_players = 0,
+                    addr = serverIP
+                };
+            }
+            else
+                Info = Steam.IGameServersService.CSERVER(serverIP);
+            if(Info == null) { return; }
+            embed = Builder(embed, Info, serverIP);
 
             /// Thinking about how I do it, since steam://rungameid/427420 is not a valid url
             // var builder = new ComponentBuilder()
@@ -46,7 +61,7 @@ namespace DSSU
             DiscordMessages ms = new DiscordMessages()
             {
                 EmbedBuilder = embed,
-                Info = info,
+                Info = Info,
                 IP = serverIP,
             };
 
@@ -54,9 +69,6 @@ namespace DSSU
         }
 
         //This is for the General Channel. This is only a single update (The most Current)
-
-        private static Steam.Server? Info = new Steam.Server();
-        private static String? ServerIP;
 
         [Command("Server")]
         public async Task SingleServerInfoAsync(string ServerName
