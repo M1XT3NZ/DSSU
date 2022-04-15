@@ -6,7 +6,6 @@ namespace Steam
     public class IGameServersService
     {
         //Steam Web API Key: https://steamcommunity.com/dev/apikey
-        private static string API_KEY = "YOUR_WEB_API_KEY";
 
         public static Server[] GetServerList(string url)
         {
@@ -18,7 +17,7 @@ namespace Steam
 
         public static Server CSERVER(string serverIP)
         {
-            var info = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={API_KEY}&filter=\gameaddr\{serverIP}&limit=6320").First();
+            var info = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={DSSU.XmlHelper.STEAM_API_KEY}&filter=\gameaddr\{serverIP}&limit=6320").First();
             Server server = new Server()
             {
                 players = info.players,

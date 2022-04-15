@@ -24,15 +24,13 @@ namespace DSSU
 
         [Command("ServerInfo")]
         public async Task MServerInfoAsync(
-            string ServerIP, string ServerInformation = ""
+            string ServerIP
            )
         {
-            if (Context.Channel.Id != 829380382104617050 || Context.Channel.Id != 964301577877864509)
+            if (Context.Channel.Id != 829380382104617050 && Context.Channel.Id != 964301577877864509)
                 return;
             if (ServerIP == null)
                 return;
-            if (string.IsNullOrEmpty(ServerInformation))
-                ServerInformation = "No Information Available Right Now";
             var serverIP = ServerIP.Trim();
             var info = Steam.IGameServersService.CSERVER(ServerIP);
 
@@ -42,7 +40,7 @@ namespace DSSU
             //     .WithButton("Start DAYZ", style: ButtonStyle.Link, url: "steam://rungameid/427520");
 
             var t = await ReplyAsync(embed: embed.Build()/*, components: builder.Build()*/);
-
+            Console.WriteLine(t.ToString());
             DiscordMessages ms = new DiscordMessages()
             {
                 EmbedBuilder = embed,

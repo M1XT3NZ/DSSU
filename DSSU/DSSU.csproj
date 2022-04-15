@@ -12,8 +12,4 @@
     <PackageReference Include="SteamQueryNet" Version="1.0.6" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GetGameServerInfo\GetGameServerInfo.csproj" />
-  </ItemGroup>
-
 </Project>

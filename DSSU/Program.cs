@@ -19,19 +19,27 @@ namespace DSSU // Note: actual namespace depends on the project name.
         public async Task MainAsync()
         {
             var autoEvent = new AutoResetEvent(false);
+            if (!XmlHelper.DoesSettingsFileExist())
+            {
+                XmlHelper.CreateSettingsFile();
+                Console.WriteLine("Please Fill in the Token and API Key in the Settings.xml");
+                Console.WriteLine("After you have entered both the Token and the API Key press any key");
+                Console.Read();
+            }
 
+            XmlHelper.DISCORD_TOKEN = XmlHelper.GetApplicationSetting("DiscordToken");
+            XmlHelper.STEAM_API_KEY = XmlHelper.GetApplicationSetting("SteamAPIKEY");
             //5 minutes = 300000
+
             _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _client.Log += Log;
             _commands.Log += Log;
 
-            var token = "YOUR_BOT_TOKEN";
-
             await InstallCommandsAsync();
 
-            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.LoginAsync(TokenType.Bot, XmlHelper.DISCORD_TOKEN);
 
             await _client.StartAsync();
             _client.Ready += () =>
