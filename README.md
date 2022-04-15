@@ -13,7 +13,7 @@ DSSU is a a very bad name for a Bot that updates the Server data and shows them 
 ### 1. Compile the program
 ### 2. Then add the your Bot to the Server
 ### 3. Start the bot and follow the instructions
-### 3. Type !ServerInfo <IP> for the server you want to show an embed for
+### 4. Type !ServerInfo <IP> for the server you want to show an embed for
   
 
 
