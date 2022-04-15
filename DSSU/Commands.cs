@@ -86,7 +86,6 @@ namespace DSSU
 
                     ServerIP = Servers.Namalsk.Trim();
                     Info = Steam.IGameServersService.CSERVER(Servers.Chernarus);
-                    Console.WriteLine("im a testing whore");
                     break;
 
                 case string str when str.Equals(Servers.EString, StringComparison.InvariantCultureIgnoreCase):
