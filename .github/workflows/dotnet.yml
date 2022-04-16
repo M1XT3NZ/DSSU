@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish --runtime linux-x64 --self-contained -c Release -o Pub
+      run: dotnet publish --runtime linux-x64 --self-contained -c Release
     - name: Generate release tag
       id: tag
       run: |
@@ -29,6 +29,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
-        files: /DSSU/Pub/DSSU.dll
+        files: DSSU.dll
       
 
