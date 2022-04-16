@@ -38,10 +38,8 @@ namespace DSSU
                 IsOffline = true;
             }
             else
-            {
                 IsOffline = false;
-            }
-            if (Info == null) { return; }
+
             embed = Builder(embed, Info, serverIP);
             ms = GetDiscordMessage(embed, Info, serverIP, IsOffline);
 
