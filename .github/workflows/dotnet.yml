@@ -9,23 +9,23 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish DSSU/DSSU.csproj --os linux --self-contained -c Release -o Pub --no-restore
+      run: dotnet publish DSSU/DSSU.csproj --os linux --self-contained -c Release -o Pub
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.2
+      uses: actions/upload-artifact@v3.0.0
       with:
-        name: website
-        path: SimpleFeedReader/pub/**
+        name: Pub
+        path: DSSU/Pub/**
         if-no-files-found: error
       
 
