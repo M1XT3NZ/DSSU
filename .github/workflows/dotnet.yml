@@ -28,6 +28,6 @@ jobs:
       with:
         files: |
           /home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/linux-x64/publish/DSSU
-          home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/win-x64/publish/DSSU.exe
+          /home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/win-x64/publish/DSSU.exe
       
 
