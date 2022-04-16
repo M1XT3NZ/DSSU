@@ -1,11 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
 
-namespace DSSU // Note: actual namespace depends on the project name.
+namespace DSSU
 {
     public class Program
     {

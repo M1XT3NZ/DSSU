@@ -1,18 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using SteamQueryNet;
-using SteamQueryNet.Interfaces;
-using SteamQueryNet.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace DSSU
 {
@@ -49,7 +36,7 @@ namespace DSSU
             }
             else
                 Info = Steam.IGameServersService.CSERVER(serverIP);
-            if(Info == null) { return; }
+            if (Info == null) { return; }
             embed = Builder(embed, Info, serverIP);
 
             /// Thinking about how I do it, since steam://rungameid/427420 is not a valid url
@@ -69,13 +56,12 @@ namespace DSSU
         }
 
         //This is for the General Channel. This is only a single update (The most Current)
+        //Only useable every 5 Minutes
 
         [Command("Server")]
         public async Task SingleServerInfoAsync(string ServerName
             )
         {
-            //    Console.WriteLine($"This is the current Datetime {DateTime.Now}\n" +
-            //       $"This is the old Datetime {Program.dt}");
             if (Program.dt >= DateTime.Now)
                 return;
 
@@ -91,12 +77,11 @@ namespace DSSU
 
                     ServerIP = Servers.Namalsk.Trim();
                     Info = Steam.IGameServersService.CSERVER(Servers.Namalsk);
-                    Console.WriteLine("im a testing whore");
                     break;
 
                 case string str when str.Equals(Servers.CString, StringComparison.InvariantCultureIgnoreCase):
 
-                    ServerIP = Servers.Namalsk.Trim();
+                    ServerIP = Servers.Chernarus.Trim();
                     Info = Steam.IGameServersService.CSERVER(Servers.Chernarus);
                     break;
 
@@ -107,7 +92,8 @@ namespace DSSU
                     break;
 
                 default:
-                    Console.WriteLine("Returned since");
+                    Console.WriteLine($"Returned since the Person Wrote Gibberish\n" +
+                        $"The Person Wrote: {ServerName}");
                     return;
             }
             if (ServerIP == null || Info == null)
@@ -116,6 +102,15 @@ namespace DSSU
             embed = Builder(embed, Info, ServerIP);
 
             await ReplyAsync(embed: embed.Build());
+        }
+
+        [Command("Help")]
+        public async Task ShowHelp()
+        {
+            await ReplyAsync("The Current Commands Are\n" +
+                "!ServerInfo <IP> (Admins Only)\n" +
+                "!Server <NameOfTheServer> for example !Server namalsk\n" +
+                "Have a Wonderful day :)");
         }
 
         public static EmbedBuilder Builder(EmbedBuilder embed, Steam.Server info, string ip)
