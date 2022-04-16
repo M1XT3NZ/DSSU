@@ -11,7 +11,7 @@ namespace DSSU
 
         private static Steam.Server? Info = new Steam.Server();
         private static String? ServerIP;
-        private static DiscordMessages ms;
+        private static DiscordMessages? ms;
         private static bool IsOffline = false;
 
         [Command("ServerInfo")]
@@ -136,9 +136,9 @@ namespace DSSU
 
         public class DiscordMessages
         {
-            public EmbedBuilder EmbedBuilder { get; set; }
-            public Steam.Server Info { get; set; }
-            public string IP { get; set; }
+            public EmbedBuilder? EmbedBuilder { get; set; }
+            public Steam.Server? Info { get; set; }
+            public string? IP { get; set; }
             public bool Offline { get; set; }
         }
     }
