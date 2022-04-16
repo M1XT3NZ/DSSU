@@ -21,6 +21,10 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet publish --runtime linux-x64 --self-contained -c Release -o Pub
+    - name: Generate release tag
+      id: tag
+      run: |
+        echo "::set-output name=release_tag::Release_$(date +"%Y.%m.%d_%H-%M")"
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
