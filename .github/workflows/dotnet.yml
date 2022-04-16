@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish DSSU/DSSU.csproj --os linux --self-contained -c Release -o Pub
+      run: dotnet publish --os linux --self-contained -c Release -o Pub
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.0.0
       with:
