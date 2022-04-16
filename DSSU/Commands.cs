@@ -11,6 +11,8 @@ namespace DSSU
 
         private static Steam.Server? Info = new Steam.Server();
         private static String? ServerIP;
+        private static DiscordMessages ms;
+        private static bool IsOffline = false;
 
         [Command("ServerInfo")]
         public async Task MServerInfoAsync(
@@ -23,8 +25,8 @@ namespace DSSU
             if (ServerIP == null)//Could do both in the same line but looks cleaner imo
                 return;
             var serverIP = ServerIP.Trim();
-
-            if (Steam.IGameServersService.CSERVER(ServerIP) == null)
+            Info = Steam.IGameServersService.CSERVER(ServerIP);
+            if (Info == null)
             {
                 Info = new Steam.Server()
                 {
@@ -33,11 +35,15 @@ namespace DSSU
                     max_players = 0,
                     addr = serverIP
                 };
+                IsOffline = true;
             }
             else
-                Info = Steam.IGameServersService.CSERVER(serverIP);
+            {
+                IsOffline = false;
+            }
             if (Info == null) { return; }
             embed = Builder(embed, Info, serverIP);
+            ms = GetDiscordMessage(embed, Info, serverIP, IsOffline);
 
             /// Thinking about how I do it, since steam://rungameid/427420 is not a valid url
             // var builder = new ComponentBuilder()
@@ -45,14 +51,20 @@ namespace DSSU
 
             var t = await ReplyAsync(embed: embed.Build()/*, components: builder.Build()*/);
             Console.WriteLine(t.ToString());
+
+            mymessages.Add(t, ms);
+        }
+
+        public DiscordMessages GetDiscordMessage(EmbedBuilder embed, Steam.Server Info, string IP, bool IsOffline = false)
+        {
             DiscordMessages ms = new DiscordMessages()
             {
                 EmbedBuilder = embed,
                 Info = Info,
-                IP = serverIP,
+                IP = IP,
+                Offline = IsOffline
             };
-
-            mymessages.Add(t, ms);
+            return ms;
         }
 
         //This is for the General Channel. This is only a single update (The most Current)
@@ -129,6 +141,7 @@ namespace DSSU
             public EmbedBuilder EmbedBuilder { get; set; }
             public Steam.Server Info { get; set; }
             public string IP { get; set; }
+            public bool Offline { get; set; }
         }
     }
 }

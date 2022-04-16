@@ -102,7 +102,17 @@ namespace DSSU
             {
                 var message = item.Key;
                 var embed = item.Value.EmbedBuilder;
-                var info = item.Value.Info;
+                var info = Steam.IGameServersService.CSERVER(item.Value.IP);
+                if (info == null) { return; }
+                if (item.Value.Offline)
+                {
+                    Console.WriteLine("Offline = True");
+                    if (info.max_players > 0)
+                    {
+                        embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
+                        item.Value.Offline = false;
+                    }
+                }
 
                 embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
                 message.ModifyAsync(x => x.Embed = embed.Build());
