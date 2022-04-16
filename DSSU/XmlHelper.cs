@@ -68,7 +68,7 @@ namespace DSSU
                         new XElement("Application",
                             new XElement("SteamAPIKEY", "YOUR_API_KEY_HERE"),
                             new XComment("//Steam Web API Key: https://steamcommunity.com/dev/apikey"),
-                            new XComment("DiscordToken is the Token from your bot"),
+                            new XComment("DiscordToken is the Token from your bot: https://discord.com/developers/applications"),
                             new XElement("DiscordToken", "YOUR_TOKEN_HERE")
 
                         )
