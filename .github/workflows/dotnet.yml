@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: Pub
-        path: \DSSU\DSSU\Pub\**
+        path: \DSSU\DSSU\Pub\
         if-no-files-found: error
       
 
