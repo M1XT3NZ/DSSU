@@ -20,12 +20,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish --os linux --self-contained -c Release -o Pub
+      run: dotnet publish --self-contained -c Release -o Pub
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.0.0
+      uses: actions/upload-artifact@v2.2.2
       with:
-        name: Pub
-        path: DSSU/DSSU/Pub/**
+        name: Puby
+        path: DSSU/Pub/**
         if-no-files-found: error
       
 
