@@ -30,7 +30,7 @@ namespace DSSU
             {
                 Info = new Steam.Server()
                 {
-                    name = "Offline",
+                    name = "Currently Offline",
                     players = 0,
                     max_players = 0,
                     addr = serverIP
