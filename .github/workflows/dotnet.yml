@@ -21,11 +21,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet publish --runtime linux-x64 --self-contained -c Release -o Pub
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.2
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        name: Puby
-        path: DSSU/Pub/**
-        if-no-files-found: error
+        files: DSSU
       
 
