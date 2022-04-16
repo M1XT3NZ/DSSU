@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,12 +22,12 @@ jobs:
     - name: Build
       run: dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true
     - name: BuildWindows
-      run: dotnet publish -c Release -r windows-x64 -p:PublishSingleFile=True
+      run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=True
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           /home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/linux-x64/publish/DSSU
-          home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/windows-x64/publish/DSSU.exe
+          home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/win-x64/publish/DSSU.exe
       
 
