@@ -29,6 +29,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
-        files: DSSU.dll
+        files: /home/runner/work/DSSU/DSSU/DSSU/bin/Release/net6.0/linux-x64/publish/DSSU
       
 
