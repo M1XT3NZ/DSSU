@@ -1,9 +1,9 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DSSU.Commands;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using DSSU.Commands;
 
 namespace DSSU
 {
@@ -22,11 +22,10 @@ namespace DSSU
             if (!XmlHelper.DoesSettingsFileExist())
             {
                 XmlHelper.CreateSettingsFile();
-                Console.WriteLine("Please Fill in the Token and API Key in the Settings.xml");
-                Console.WriteLine("After you have entered both the Token and the API Key press any key");
+                Logger.Log("Please Fill in the Token and API Key in the Settings.xml");
+                Logger.Log("After you have entered both the Token and the API Key press any key");
                 Console.Read();
             }
-            JsonHelper.Json.GetJson();
             XmlHelper.CheckIfSettingsExists();
             XmlHelper.LoadSettings();
             //5 minutes = 300000
@@ -47,11 +46,19 @@ namespace DSSU
             await _client.StartAsync();
             _client.Ready += () =>
             {
-                Console.WriteLine("Bot is connected!");
+                Logger.Log("Bot is connected!");
                 return Task.CompletedTask;
             };
+
+            _client.Ready += _client_Ready;
             // Block this task until the program is closed.
             await Task.Delay(-1);
+        }
+
+        private Task _client_Ready()
+        {
+            JsonHelper.Json.GetJson();
+            return Task.CompletedTask;
         }
 
         public async Task InstallCommandsAsync()
@@ -95,22 +102,22 @@ namespace DSSU
             {
                 case LogSeverity.Critical:
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(msg);
+                    Logger.Log(msg);
                     break;
 
                 case LogSeverity.Error:
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(msg);
+                    Logger.Log(msg);
                     break;
 
                 case LogSeverity.Warning:
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(msg);
+                    Logger.Log(msg);
                     break;
 
                 case LogSeverity.Info:
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(msg);
+                    Logger.Log(msg);
                     break;
 
                 case LogSeverity.Verbose:
@@ -121,28 +128,29 @@ namespace DSSU
 
                 default:
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(msg);
+                    Logger.Log(msg);
                     break;
             }
 
             return Task.CompletedTask;
         }
 
-        public void ServerStatusCheck(Object stateInfo)
+        public async void ServerStatusCheck(Object stateInfo)
         {
             if (ServerInfoEmbed.mymessages == null)
                 return;
+            Logger.Log("Checking Server Status");
             try
             {
                 foreach (var item in ServerInfoEmbed.mymessages)
                 {
                     var message = item.Key;
                     var embed = item.Value.EmbedBuilder;
-                    var info = Steam.IGameServersService.CSERVER(item.Value.IP);
+                    var info = Steam.IGameServersService.CSERVER(embed.Description);
                     if (info == null) { return; }
                     if (item.Value.Offline)
                     {
-                        Console.WriteLine("Offline = True");
+                        Logger.Log("Offline = True");
                         if (info.max_players > 0)
                         {
                             embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
@@ -151,12 +159,17 @@ namespace DSSU
                     }
 
                     embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
-                    message.ModifyAsync(x => x.Embed = embed.Build());
+                    await message.ModifyAsync(x => x.Embed = embed.Build());
+                    Logger.Log($"Updated Server Info of {info.name}");
+                    await Task.Delay(15000);
                 }
             }
             catch (Exception g)
             {
-                Console.WriteLine(g.Message);
+                var ms = _client.GetUser(221467177302097931);
+                var dm = await ms.CreateDMChannelAsync();
+                await dm.SendMessageAsync(text: g.Message);
+                Logger.Log(g.Message);
             }
         }
     }

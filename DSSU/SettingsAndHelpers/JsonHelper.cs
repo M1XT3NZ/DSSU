@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using DSSU.Commands;
+﻿using DSSU.Commands;
 using DSSU.Commands.Classes;
+using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace DSSU.JsonHelper
 {
@@ -17,11 +16,27 @@ namespace DSSU.JsonHelper
             if (!File.Exists(JsonFile))
                 return;
             var JsonText = File.ReadAllText(JsonFile);
-            // JsonSerializer.Deserialize<List<Messageid>>(JsonText);
             var t = JsonSerializer.Deserialize<List<Messageid>>(JsonText);
             foreach (var item in t)
             {
-                SettingsAndHelpers.Helpers.LoadMessage(item.Id);
+                foreach (var guilds in Program._client.Guilds)
+                {
+                    switch (guilds.Name)
+                    {
+                        case "KarmaKrew - DayZ Modded":
+                            SettingsAndHelpers.Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId);
+                            Logger.Log("KarmaKrew Discord");
+                            break;
+
+                        case "Testing":
+                            SettingsAndHelpers.Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId);
+                            Logger.Log("Testing Discrod");
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
             }
         }
 

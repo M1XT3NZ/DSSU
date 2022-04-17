@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using DSSU.SettingsAndHelpers;
+using System.Text;
 using System.Xml.Linq;
-using DSSU.SettingsAndHelpers;
 
 namespace DSSU
 {
@@ -171,7 +171,7 @@ namespace DSSU
         {
             if ((string)GetApplicationSetting(nameof(Settings.SteamAPIKEY)) == Settings.SteamAPIKEY)
             {
-                Console.WriteLine("This shouldnt have happened :(");
+                Logger.Log("This shouldnt have happened :(");
                 return;
             }
             Settings.DiscordToken = (string)GetApplicationSetting(nameof(Settings.DiscordToken));

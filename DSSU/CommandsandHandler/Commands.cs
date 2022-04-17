@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
+using DSSU.Commands.Classes;
 using DSSU.RateLimit;
 using System.Collections.ObjectModel;
-using DSSU.Commands.Classes;
 
 namespace DSSU.Commands
 {
@@ -18,7 +18,7 @@ namespace DSSU.Commands
         private static DiscordMessages? ms;
         private static bool IsOffline = false;
 
-        [Command("ServerInfo")]
+        [Command("GetServerInfo")]
         public async Task MServerInfoAsync(
             string ServerIP
            )
@@ -117,12 +117,12 @@ namespace DSSU.Commands
 
                 case string str when str.Equals(Servers.EString, StringComparison.InvariantCultureIgnoreCase):
 
-                    Console.WriteLine("Well that doesnt exist yet ^_____^");
+                    Logger.Log("Well that doesnt exist yet ^_____^");
                     //Info = Steam.IGameServersService.CSERVER(Servers.Esseker);
                     break;
 
                 default:
-                    Console.WriteLine($"Returned since the Person Wrote Gibberish\n" +
+                    Logger.Log($"Returned since the Person Wrote Gibberish\n" +
                         $"The Person Wrote: {ServerName}");
                     return;
             }
