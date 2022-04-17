@@ -31,7 +31,7 @@ namespace DSSU
             XmlHelper.LoadSettings();
             //5 minutes = 300000
 
-            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 6000);
+            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
             _client = new DiscordSocketClient();
             _commands = new CommandService(new CommandServiceConfig
             {
