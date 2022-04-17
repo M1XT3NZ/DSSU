@@ -16,8 +16,8 @@ namespace DSSU.SettingsAndHelpers
             //var t = guild.GetTextChannel(829380382104617050);
             //t.GetMessagesAsync(2, dir: Direction.Before);
             await Task.Delay(10000);
-            var guild = Program._client.GetGuild(761993117662052383);
-            var t = guild.GetTextChannel(964301577877864509);
+            var guild = Program._client.GetGuild(567699721343336448);
+            var t = guild.GetTextChannel(829380382104617050);
             var g = await t.GetMessageAsync(messageid);
             //IUserMessage message = (IUserMessage)g;
             if (g is IUserMessage message)

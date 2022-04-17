@@ -21,8 +21,6 @@ namespace DSSU.JsonHelper
             var t = JsonSerializer.Deserialize<List<Messageid>>(JsonText);
             foreach (var item in t)
             {
-                Console.WriteLine(item.Name);
-                Console.WriteLine(item.Id);
                 SettingsAndHelpers.Helpers.LoadMessage(item.Id);
             }
         }
