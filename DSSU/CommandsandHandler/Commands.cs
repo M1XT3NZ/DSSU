@@ -1,13 +1,17 @@
 ﻿using Discord;
 using Discord.Commands;
+using DSSU.RateLimit;
+using System.Collections.ObjectModel;
+using DSSU.Commands.Classes;
 
-namespace DSSU
+namespace DSSU.Commands
 {
     public class ServerInfoEmbed : ModuleBase<SocketCommandContext>
     {
-        private EmbedBuilder embed = new EmbedBuilder();
+        public static EmbedBuilder embed = new EmbedBuilder();
 
         public static Dictionary<IUserMessage, DiscordMessages> mymessages = new Dictionary<IUserMessage, DiscordMessages>();
+        public static ObservableCollection<Messageid> MessagIDs = new ObservableCollection<Messageid>();
 
         private static Steam.Server? Info = new Steam.Server();
         private static String? ServerIP;
@@ -19,6 +23,8 @@ namespace DSSU
             string ServerIP
            )
         {
+            if (!SettingsAndHelpers.Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
+                return;
             //Checks if the Channel is either the Karma Krew server-status channel or the one in my private testing area
             if (Context.Channel.Id != 829380382104617050 && Context.Channel.Id != 964301577877864509)
                 return;
@@ -43,17 +49,32 @@ namespace DSSU
             embed = Builder(embed, Info, serverIP);
             ms = GetDiscordMessage(embed, Info, serverIP, IsOffline);
 
+            //This is not going to be possible unless i actually get all of the mods manually every time anything changes with the mods
             /// Thinking about how I do it, since steam://rungameid/427420 is not a valid url
-            // var builder = new ComponentBuilder()
-            //     .WithButton("Start DAYZ", style: ButtonStyle.Link, url: "steam://rungameid/427520");
+            /// var builder = new ComponentBuilder()
+            ///     .WithButton("Start DAYZ", style: ButtonStyle.Link, url: "steam://rungameid/427520");
 
             var t = await ReplyAsync(embed: embed.Build()/*, components: builder.Build()*/);
-            Console.WriteLine(t.ToString());
 
             mymessages.Add(t, ms);
+
+            Messageid messageid = new Messageid()
+            {
+                Name = Info.name,
+                Id = t.Id,
+            };
+            MessagIDs.Add(messageid);
         }
 
-        public DiscordMessages GetDiscordMessage(EmbedBuilder embed, Steam.Server Info, string IP, bool IsOffline = false)
+        [Command("SaveServerInfo", RunMode = RunMode.Async)]
+        public async Task SaveServerInfoAsync()
+        {
+            if (!SettingsAndHelpers.Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
+                return;
+            JsonHelper.Json.SetJson();
+        }
+
+        public static DiscordMessages GetDiscordMessage(EmbedBuilder embed, Steam.Server Info, string IP, bool IsOffline = false)
         {
             DiscordMessages ms = new DiscordMessages()
             {
@@ -69,12 +90,11 @@ namespace DSSU
         //Only useable every 5 Minutes
 
         [Command("Server")]
+        //User Can Issue the command once every 5 minutes.
+        [Ratelimit(1, 5, Measure.Minutes)]
         public async Task SingleServerInfoAsync(string ServerName
             )
         {
-            if (Program.dt >= DateTime.Now)
-                return;
-
             //Checks if the Channel is either the Karma Krew General channel or the one in my private testing area
             if (Context.Channel.Id != 572827981932789760 && Context.Channel.Id != 761993118181621812)
                 return;
@@ -108,17 +128,19 @@ namespace DSSU
             }
             if (ServerIP == null || Info == null)
                 return;
-            Program.dt = DateTime.Now + TimeSpan.FromMinutes(5);
+
             embed = Builder(embed, Info, ServerIP);
 
             await ReplyAsync(embed: embed.Build());
         }
 
+        [Ratelimit(1, 20, Measure.Minutes)]
         [Command("Help")]
         public async Task ShowHelp()
         {
             await ReplyAsync("The Current Commands Are\n" +
                 "!ServerInfo <IP> (Admins Only)\n" +
+                "!SaveServerInfo (Admins Only)" +
                 "!Server <NameOfTheServer> for example !Server namalsk\n" +
                 "Have a Wonderful day :)");
         }
@@ -132,14 +154,6 @@ namespace DSSU
             .WithCurrentTimestamp();
 
             return embed;
-        }
-
-        public class DiscordMessages
-        {
-            public EmbedBuilder? EmbedBuilder { get; set; }
-            public Steam.Server? Info { get; set; }
-            public string? IP { get; set; }
-            public bool Offline { get; set; }
         }
     }
 }

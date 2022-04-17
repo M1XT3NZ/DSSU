@@ -7,10 +7,10 @@ namespace Steam
     {
         //Steam Web API Key: https://steamcommunity.com/dev/apikey
 
-        public static Server[] GetServerList(string url)
+        public static async Task<Server[]> GetServerList(string url)
         {
-            WebClient wc = new WebClient();
-            string data = wc.DownloadString(url);
+            HttpClient client = new HttpClient();
+            string data = await client.GetStringAsync(url);
             Query servers = JsonSerializer.Deserialize<Query>(data);
             return servers.response.servers;
         }
@@ -21,7 +21,7 @@ namespace Steam
 
             if (servers == null)
                 return null;
-            var info = servers.FirstOrDefault();
+            var info = servers.Result.FirstOrDefault();
 
             if (info == null) return null;
             Server server = new Server()
