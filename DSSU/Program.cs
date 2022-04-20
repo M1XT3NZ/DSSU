@@ -148,7 +148,16 @@ namespace DSSU
                     var message = item.Key;
                     var embed = item.Value.EmbedBuilder;
                     var info = Steam.IGameServersService.CSERVER(embed.Description);
-                    if (info == null) { return; }
+                    if (info == null)
+                    {
+                        info = new Steam.Server()
+                        {
+                            name = $"{embed.Author} is Currently Offline",
+                            players = 0,
+                            max_players = 0,
+                            addr = embed.Description
+                        };
+                    }
                     if (item.Value.Offline)
                     {
                         Logger.Log("Offline = True");
