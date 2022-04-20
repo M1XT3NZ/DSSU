@@ -2,6 +2,7 @@
 using DSSU.Commands.Classes;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using DSSU.SettingsAndHelpers.Helpers;
 
 namespace DSSU.JsonHelper
 {
@@ -21,15 +22,16 @@ namespace DSSU.JsonHelper
             {
                 foreach (var guilds in Program._client.Guilds)
                 {
+                    Task.Delay(2000);
                     switch (guilds.Name)
                     {
                         case "KarmaKrew - DayZ Modded":
-                            SettingsAndHelpers.Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId);
+                            Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId);
                             Logger.Log("KarmaKrew Discord");
                             break;
 
                         case "Testing":
-                            SettingsAndHelpers.Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId);
+                            Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId);
                             Logger.Log("Testing Discrod");
                             break;
 

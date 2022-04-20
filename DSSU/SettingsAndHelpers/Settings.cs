@@ -1,4 +1,6 @@
-﻿namespace DSSU.SettingsAndHelpers
+﻿using DSSU.SettingsAndHelpers.Helpers;
+
+namespace DSSU.SettingsAndHelpers
 {
     public class Settings
     {

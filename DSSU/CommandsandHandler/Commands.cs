@@ -3,6 +3,7 @@ using Discord.Commands;
 using DSSU.Commands.Classes;
 using DSSU.RateLimit;
 using System.Collections.ObjectModel;
+using DSSU.SettingsAndHelpers.Helpers;
 
 namespace DSSU.Commands
 {
@@ -23,8 +24,9 @@ namespace DSSU.Commands
             string ServerIP
            )
         {
-            if (!SettingsAndHelpers.Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
+            if (!Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
                 return;
+
             //Checks if the Channel is either the Karma Krew server-status channel or the one in my private testing area
             if (Context.Channel.Id != 829380382104617050 && Context.Channel.Id != 964301577877864509)
                 return;
@@ -69,7 +71,7 @@ namespace DSSU.Commands
         [Command("SaveServerInfo", RunMode = RunMode.Async)]
         public async Task SaveServerInfoAsync()
         {
-            if (!SettingsAndHelpers.Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
+            if (!Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
                 return;
             JsonHelper.Json.SetJson();
         }
@@ -96,7 +98,7 @@ namespace DSSU.Commands
             )
         {
             //Checks if the Channel is either the Karma Krew General channel or the one in my private testing area
-            if (Context.Channel.Id != 572827981932789760 && Context.Channel.Id != 761993118181621812)
+            if (Context.Channel.Id != 572827981932789760 && Context.Channel.Id != 927187571744866374 && Context.Channel.Id != 761993118181621812)
                 return;
             if (ServerName == null)//Could do both in the same line but looks cleaner imo
                 return;
@@ -126,8 +128,18 @@ namespace DSSU.Commands
                         $"The Person Wrote: {ServerName}");
                     return;
             }
-            if (ServerIP == null || Info == null)
+            if (ServerIP == null)
                 return;
+            if (Info == null)
+            {
+                Info = new Steam.Server()
+                {
+                    name = "Currently Offline",
+                    players = 0,
+                    max_players = 0,
+                    addr = ServerIP
+                };
+            }
 
             embed = Builder(embed, Info, ServerIP);
 
@@ -150,6 +162,11 @@ namespace DSSU.Commands
             embed.WithAuthor(info.name)
             .WithTitle($"Currently there are {info.players}/{info.max_players} playing.")
             .WithDescription($"{ip}")
+            //.WithFields(new EmbedFieldBuilder
+            //{
+            //    Name = "Next Restart:",
+            //    Value = Helpers.GetRestartTime(),
+            //})
             .WithThumbnailUrl("https://pbs.twimg.com/profile_images/1087807951648231426/VqouJGUB_400x400.jpg")
             .WithCurrentTimestamp();
 

@@ -55,10 +55,11 @@ namespace DSSU
             await Task.Delay(-1);
         }
 
-        private Task _client_Ready()
+        private async Task<Task> _client_Ready()
         {
             JsonHelper.Json.GetJson();
-            return Task.CompletedTask;
+            await _client.SetGameAsync("Dayz on KarmaKrew Servers", type: ActivityType.Playing);
+            return Task<Task>.CompletedTask;
         }
 
         public async Task InstallCommandsAsync()
