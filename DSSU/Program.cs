@@ -147,9 +147,11 @@ namespace DSSU
                 {
                     var message = item.Key;
                     var embed = item.Value.EmbedBuilder;
-                    var info = Steam.IGameServersService.CSERVER(embed.Description);
+                    var info = Steam.IGameServersService.CSERVER(item.Value.IP);
+
                     if (info == null)
                     {
+                        Logger.Log($"Server with IP:{embed.Description} is offline");
                         info = new Steam.Server()
                         {
                             name = $"{embed.Author} is Currently Offline",
@@ -160,23 +162,26 @@ namespace DSSU
                     }
                     if (item.Value.Offline)
                     {
-                        Logger.Log("Offline = True");
-                        if (info.max_players > 0)
+                        Logger.Log($"{embed.Description} is offline checking if it has a player account");
+                        if (info.max_players >= 0)
                         {
                             embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
                             item.Value.Offline = false;
                         }
                     }
-
+                    embed.Author.Name = info.name;
                     embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
                     await message.ModifyAsync(x => x.Embed = embed.Build());
                     Logger.Log($"Updated Server Info of {info.name}");
-                    await Task.Delay(15000);
+                    await Task.Delay(5000);
+                    var ms = await _client.GetUserAsync(221467177302097931);
+                    var dm = await ms.CreateDMChannelAsync();
+                    await dm.SendMessageAsync(embed: embed.Build());
                 }
             }
             catch (Exception g)
             {
-                var ms = _client.GetUser(221467177302097931);
+                var ms = await _client.GetUserAsync(221467177302097931);
                 var dm = await ms.CreateDMChannelAsync();
                 await dm.SendMessageAsync(text: g.Message);
                 Logger.Log(g.Message);

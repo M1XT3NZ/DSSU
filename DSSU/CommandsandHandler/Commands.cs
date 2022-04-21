@@ -64,6 +64,7 @@ namespace DSSU.Commands
             {
                 Name = Info.name,
                 Id = t.Id,
+                IP = serverIP,
             };
             MessagIDs.Add(messageid);
         }

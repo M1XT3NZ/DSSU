@@ -10,7 +10,9 @@ namespace DSSU.SettingsAndHelpers.Helpers
             return user.GuildPermissions.ManageGuild;
         }
 
-        public static async void LoadMessage(ulong messageid, ulong textchannel, ulong GuildID)
+        public static bool IsOffline = false;
+
+        public static async void LoadMessage(ulong messageid, ulong textchannel, ulong GuildID, string serverip)
         {
             await Task.Delay(10000);//Delaying to wait For the Data to load
             var guild = Program._client.GetGuild(GuildID);
@@ -23,9 +25,22 @@ namespace DSSU.SettingsAndHelpers.Helpers
                     Logger.Log($"Found Message");
                     Logger.Log(item.Title);
                     Logger.Log(item.Description);
-                    var info = Steam.IGameServersService.CSERVER(item.Description);
+                    var info = Steam.IGameServersService.CSERVER(serverip);
+                    if (info == null)
+                    {
+                        Logger.Log($"");
+                        info = new Steam.Server()
+                        {
+                            name = $"{Commands.ServerInfoEmbed.embed.Author} is Currently Offline",
+                            players = 0,
+                            max_players = 0,
+                            addr = Commands.ServerInfoEmbed.embed.Description
+                        };
+                        IsOffline = true;
+                    }
+                    IsOffline = false;
                     Commands.ServerInfoEmbed.Builder(Commands.ServerInfoEmbed.embed, info, item.Description);
-                    Commands.ServerInfoEmbed.mymessages.Add(message, Commands.ServerInfoEmbed.GetDiscordMessage(Commands.ServerInfoEmbed.embed, info, item.Description));
+                    Commands.ServerInfoEmbed.mymessages.Add(message, Commands.ServerInfoEmbed.GetDiscordMessage(Commands.ServerInfoEmbed.embed, info, item.Description, IsOffline));
                 }
             }
         }
