@@ -12,33 +12,46 @@ namespace DSSU.JsonHelper
         private static ObservableCollection<string> JsonFiles = new ObservableCollection<string>();
         private static List<Messageid> JsonMessages = new List<Messageid>();
 
-        public static void GetJson()
+        public static async void GetJson()
         {
-            if (!File.Exists(JsonFile))
-                return;
-            var JsonText = File.ReadAllText(JsonFile);
-            var t = JsonSerializer.Deserialize<List<Messageid>>(JsonText);
-            foreach (var item in t)
+            try
             {
-                foreach (var guilds in Program._client.Guilds)
+                if (!File.Exists(JsonFile))
+                    return;
+                var JsonText = File.ReadAllText(JsonFile);
+                var t = JsonSerializer.Deserialize<List<Messageid>>(JsonText);
+                foreach (var item in t)
                 {
-                    Task.Delay(2000);
-                    switch (guilds.Name)
+                    if (item.IP == null)
+                        throw new Exception("IP in the IDS.JSON was Misconfigured and had no ip");
+                    foreach (var guilds in Program._client.Guilds)
                     {
-                        case "KarmaKrew - DayZ Modded":
-                            Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId, item.IP);
-                            Logger.Log("KarmaKrew Discord");
-                            break;
+                        Task.Delay(2000);
+                        switch (guilds.Name)
+                        {
+                            case "KarmaKrew - DayZ Modded":
+                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId, item.IP);
+                                Logger.Log("KarmaKrew Discord");
+                                break;
 
-                        case "Testing":
-                            Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId, item.IP);
-                            Logger.Log("Testing Discrod");
-                            break;
+                            case "Testing":
+                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId, item.IP);
+                                Logger.Log("Testing Discrod");
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
                 }
+            }
+            catch (Exception g)
+            {
+                var ms = await Program._client.GetUserAsync(221467177302097931);
+                var dm = await ms.CreateDMChannelAsync();
+                await dm.SendMessageAsync(text: g.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Logger.Log("Hey we have a Invalid Json file please redo the messages and save them");
             }
         }
 

@@ -30,7 +30,7 @@ namespace DSSU
             XmlHelper.LoadSettings();
             //5 minutes = 300000
 
-            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
+            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 30000);
             _client = new DiscordSocketClient();
             _commands = new CommandService(new CommandServiceConfig
             {
@@ -147,8 +147,10 @@ namespace DSSU
                 {
                     var message = item.Key;
                     var embed = item.Value.EmbedBuilder;
+                    var fieldbuiler = item.Value.EmbedFieldBuilder;
                     var info = Steam.IGameServersService.CSERVER(item.Value.IP);
-
+                    ServerInfoEmbed.GetCorrectRestartTimes(item.Value.MapName);
+                    fieldbuiler.WithValue(SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(ServerInfoEmbed.CurrentTimeSpans));
                     if (info == null)
                     {
                         Logger.Log($"Server with IP:{embed.Description} is offline");
@@ -165,18 +167,15 @@ namespace DSSU
                         Logger.Log($"{embed.Description} is offline checking if it has a player account");
                         if (info.max_players >= 0)
                         {
-                            embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
+                            embed = ServerInfoEmbed.Builder(embed, fieldbuiler, info, item.Value.IP);
                             item.Value.Offline = false;
                         }
                     }
                     embed.Author.Name = info.name;
-                    embed = ServerInfoEmbed.Builder(embed, info, item.Value.IP);
+                    embed = ServerInfoEmbed.Builder(embed, fieldbuiler, info, item.Value.IP);
                     await message.ModifyAsync(x => x.Embed = embed.Build());
                     Logger.Log($"Updated Server Info of {info.name}");
-                    await Task.Delay(5000);
-                    var ms = await _client.GetUserAsync(221467177302097931);
-                    var dm = await ms.CreateDMChannelAsync();
-                    await dm.SendMessageAsync(embed: embed.Build());
+                    await Task.Delay(3000);
                 }
             }
             catch (Exception g)

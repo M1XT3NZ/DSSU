@@ -28,7 +28,6 @@ namespace DSSU.SettingsAndHelpers.Helpers
                     var info = Steam.IGameServersService.CSERVER(serverip);
                     if (info == null)
                     {
-                        Logger.Log($"");
                         info = new Steam.Server()
                         {
                             name = $"{Commands.ServerInfoEmbed.embed.Author} is Currently Offline",
@@ -39,8 +38,8 @@ namespace DSSU.SettingsAndHelpers.Helpers
                         IsOffline = true;
                     }
                     IsOffline = false;
-                    Commands.ServerInfoEmbed.Builder(Commands.ServerInfoEmbed.embed, info, item.Description);
-                    Commands.ServerInfoEmbed.mymessages.Add(message, Commands.ServerInfoEmbed.GetDiscordMessage(Commands.ServerInfoEmbed.embed, info, item.Description, IsOffline));
+                    Commands.ServerInfoEmbed.Builder(Commands.ServerInfoEmbed.embed, Commands.ServerInfoEmbed.embedField, info, item.Description);
+                    Commands.ServerInfoEmbed.mymessages.Add(message, Commands.ServerInfoEmbed.GetDiscordMessage(Commands.ServerInfoEmbed.embed, Commands.ServerInfoEmbed.embedField, info, item.Description, "", IsOffline));
                 }
             }
         }
@@ -50,6 +49,7 @@ namespace DSSU.SettingsAndHelpers.Helpers
             foreach (var item in time)
             {
                 var _time = item;
+
                 _time -= DateTime.Now.TimeOfDay;
                 switch (Math.Round(_time.TotalHours))
                 {
@@ -63,18 +63,29 @@ namespace DSSU.SettingsAndHelpers.Helpers
                     case 2:
 
                         return true;
+
+                    case 3:
+                        return true;
                 }
             }
             return false;
         }
 
         //This should return the Timespan of the array which is
-        public static TimeSpan? GetTimeWhichIsLessThan3Hours(TimeSpan[] time)
+        public static TimeSpan? GetTimeWhichIsLessThan3Hours(TimeSpan[] time, bool Is4Hours = false)
         {
             foreach (var item in time)
             {
                 var _time = item;
+
+                Console.WriteLine("Server Restart Time: " + _time);
+                var t = DateTime.Now.TimeOfDay;
+                Console.WriteLine($"Current Time {t}");
+                //var newtime = t.Subtract(_time);
                 var newtime = _time.Subtract(DateTime.Now.TimeOfDay);
+                Console.WriteLine("Time when the next restart is: " + newtime);
+                if (Math.Round(t.TotalHours, 0, MidpointRounding.ToZero) == item.TotalHours)
+                    goto Here;
                 if (Math.Round(newtime.TotalHours, 0, MidpointRounding.ToZero) >= 0)
 
                     switch (Math.Round(newtime.TotalHours, 0, MidpointRounding.ToZero))
@@ -92,41 +103,76 @@ namespace DSSU.SettingsAndHelpers.Helpers
 
                             return newtime;
 
+                        case 3:
+                            if (Is4Hours)
+                            {
+                                Console.WriteLine(nameof(time));
+                                return newtime;
+                            }
+                            break;
+
                         default:
                             break;
                     }
+                Here:;
             }
             return null;
         }
 
-        public static string GetRestartTime() => HowMuchTimeTillRestart(ChernarusRestartTime);
+        public static string GetRestartTime() => HowMuchTimeTillRestart(NamalskRestartTime);
 
         //Converts to local time and then adding one hour, Timezones be damned
         public static TimeSpan ConvertToLocalTime(string time)
         {
+            if (time == "00:00" && DateTime.Now.Hour != 0)
+            {
+                Console.WriteLine(1);
+                return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1).Add(TimeSpan.FromDays(1)));
+            }
+            else if (time == "00:00" && DateTime.Now.Hour == 0)
+            {
+                Console.WriteLine(2);
+                return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1));
+            }
+
             return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1));
         }
+
+        private static TimeSpan dt;
 
         public static string HowMuchTimeTillRestart(TimeSpan[] restarttimes)
         {
             if (IsTimeLessThan3Hours(restarttimes))
             {
-                var t = GetTimeWhichIsLessThan3Hours(restarttimes);
+                var t = GetTimeWhichIsLessThan3Hours(restarttimes, true);
                 if (t == null)
                     return String.Empty;
+                Console.WriteLine(Math.Round(t.Value.TotalHours));
                 if (Math.Round(t.Value.TotalHours, 0, MidpointRounding.ToZero) == 0)
-                    return $"Time Till Restart {t:%m} Minutes";
+                {
+                    return $"Time Till Restart {t:%m} Minutes.";
+                }
                 else
-                    return $"Time Till Restart {t:%h}:{t:%m} Hours";
+                {
+                    dt += (TimeSpan)t;
+                    return $"Time Till Restart {t:%h} hour(s) and {t:mm} minutes.";
+                }
             }
             else
                 return "Couldnt Get Restart Time";
         }
 
-        public static TimeSpan[] ChernarusRestartTime { get; set; } = {ConvertToLocalTime("00:00"), ConvertToLocalTime("03:00"),//ConvertToLocalTime("11:00"),
-
+        public static TimeSpan[] ChernarusRestartTime { get; } = {
+            ConvertToLocalTime("00:00"), ConvertToLocalTime("03:00"),
             ConvertToLocalTime("06:00"), ConvertToLocalTime("09:00"),
-            ConvertToLocalTime("12:00"), ConvertToLocalTime("15:00"), ConvertToLocalTime("18:00"), ConvertToLocalTime("21:00")
+            ConvertToLocalTime("12:00"), ConvertToLocalTime("15:00"),
+            ConvertToLocalTime("18:00"), ConvertToLocalTime("21:00")
+        };
+
+        public static TimeSpan[] NamalskRestartTime { get; } = {
+            ConvertToLocalTime("00:00"), ConvertToLocalTime("04:00"),
+            ConvertToLocalTime("08:00"), ConvertToLocalTime("12:00"),
+            ConvertToLocalTime("16:00"), ConvertToLocalTime("20:00")
         };
     }
 }
