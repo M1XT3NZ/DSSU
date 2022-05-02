@@ -1,8 +1,7 @@
-﻿using DSSU.Commands;
-using DSSU.Commands.Classes;
+﻿using DSSU.Interactions;
+using DSSU.SettingsAndHelpers.Helpers;
 using System.Collections.ObjectModel;
 using System.Text.Json;
-using DSSU.SettingsAndHelpers.Helpers;
 
 namespace DSSU.JsonHelper
 {
@@ -36,7 +35,7 @@ namespace DSSU.JsonHelper
 
                             case "Testing":
                                 Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId, item.IP);
-                                Logger.Log("Testing Discrod");
+                                Logger.Log("Testing Discord");
                                 break;
 
                             default:
@@ -57,7 +56,7 @@ namespace DSSU.JsonHelper
 
         public static void SetJson()
         {
-            foreach (var item in ServerInfoEmbed.MessagIDs)
+            foreach (var item in InteractionHelp.MessagIDs)
             {
                 JsonMessages.Add(item);
                 //JsonSerializer.Serialize<Messageid>(item, new JsonSerializerOptions { WriteIndented = true });

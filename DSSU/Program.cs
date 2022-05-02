@@ -1,100 +1,144 @@
 ﻿using Discord;
-using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
-using DSSU.Commands;
+using DSSU.Interactions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
-using System.Reflection;
 
 namespace DSSU
 {
     public class Program
     {
         private ObservableCollection<Task> tasks = new ObservableCollection<Task>();
-        public static DiscordSocketClient _client;
-        private CommandService _commands;
-        private Timer? _timer;
 
-        public static Task Main(string[] args) => new Program().MainAsync();
+        private Timer? _timer;
+        private static bool IsReady = false;
+
+        private readonly IServiceProvider _services;
+        public static DiscordSocketClient _client;
+
+        private readonly DiscordSocketConfig _socketConfig = new()
+        {
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers,
+            AlwaysDownloadUsers = true,
+        };
+
+        public Program()
+        {
+            _services = new ServiceCollection()
+                .AddSingleton(_socketConfig)
+                .AddSingleton<DiscordSocketClient>()
+                .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
+                .AddSingleton<InteractionHandler>()
+                .BuildServiceProvider();
+            _client = _services.GetRequiredService<DiscordSocketClient>();
+        }
+
+        private static void Main(string[] args)
+            => new Program().MainAsync()
+                .GetAwaiter()
+                .GetResult();
 
         public async Task MainAsync()
         {
-            var autoEvent = new AutoResetEvent(false);
-            if (!XmlHelper.DoesSettingsFileExist())
-            {
-                XmlHelper.CreateSettingsFile();
-                Logger.Log("Please Fill in the Token and API Key in the Settings.xml");
-                Logger.Log("After you have entered both the Token and the API Key press any key");
-                Console.Read();
-            }
-            XmlHelper.CheckIfSettingsExists();
-            XmlHelper.LoadSettings();
-            //5 minutes = 300000
+            //var autoEvent = new AutoResetEvent(false);
+            //if (!XmlHelper.DoesSettingsFileExist())
+            //{
+            //    XmlHelper.CreateSettingsFile();
+            //    Logger.Log("Please Fill in the Token and API Key in the Settings.xml");
+            //    Logger.Log("After you have entered both the Token and the API Key press any key");
+            //    Console.Read();
+            //}
+            //XmlHelper.CheckIfSettingsExists();
+            //XmlHelper.LoadSettings();
 
-            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
-            _client = new DiscordSocketClient();
-            _commands = new CommandService(new CommandServiceConfig
-            {
-                CaseSensitiveCommands = false,
-            });
-            _client.Log += Log;
-            _commands.Log += Log;
+            //_timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
 
-            await InstallCommandsAsync();
+            //_client = _services.GetRequiredService<DiscordSocketClient>();
 
-            await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
+            //_client.Log += Log;
+            //_client.Ready += _client_Ready;
+            //_client.Disconnected += _client_Disconnected;
 
-            await _client.StartAsync();
-            _client.Ready += () =>
-            {
-                Logger.Log("Bot is connected!");
-                return Task.CompletedTask;
-            };
+            //// Here we can initialize the service that will register and execute our commands
+            //await _services.GetRequiredService<InteractionHandler>()
+            //    .InitializeAsync();
 
-            _client.Ready += _client_Ready;
+            //// Bot token can be provided from the Configuration object we set up earlier
+            //await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
+            //await _client.StartAsync();
+            SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(SettingsAndHelpers.Helpers.Helpers.ChernarusRestartTime, false);
+            //Console.WriteLine("test " + SettingsAndHelpers.Helpers.Helpers.restart);
+
+            // Never quit the program until manually forced to.
+            await Task.Delay(Timeout.Infinite);
+
+            //_timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
+            //_client = new DiscordSocketClient();
+            //_commands = new CommandService(new CommandServiceConfig
+            //{
+            //    CaseSensitiveCommands = false,
+            //});
+            //_client.Log += Log;
+            //_commands.Log += Log;
+
+            //await InstallCommandsAsync();
+
+            //await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
+
+            //await _client.StartAsync();
+            //_client.Ready += () =>
+            //{
+            //    Logger.Log("Bot is connected!");
+            //    return Task.CompletedTask;
+            //};
+
+            //_client.Ready += _client_Ready;
+            //_client.Disconnected += _client_Disconnected;
+            //while (!IsReady)
+            //{
+            //    Task.Delay(1000);
+            //}
+            //await SetupCommands();
+            //_client.SlashCommandExecuted += Commands.ServerInfoEmbed._client_SlashCommandExecuted;
             // Block this task until the program is closed.
-            await Task.Delay(-1);
+        }
+
+        private Task _client_Disconnected(Exception arg)
+        {
+            IsReady = false;
+            return Task.CompletedTask;
         }
 
         private async Task<Task> _client_Ready()
         {
+            IsReady = true;
             JsonHelper.Json.GetJson();
             await _client.SetGameAsync("Dayz on KarmaKrew Servers", type: ActivityType.Playing);
             return Task<Task>.CompletedTask;
         }
 
-        public async Task InstallCommandsAsync()
+        private async Task SetupCommands()
         {
-            // Hook the MessageReceived event into our command handler
-            _client.MessageReceived += HandleCommandAsync;
+            var globalcommand = new SlashCommandBuilder();
+            globalcommand.WithName("getserverinfo")
+                .WithDescription("This will create an embed of the specified server that gets refreshed every 5 minutes");
+            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
+            globalcommand.WithName("server")
+                .WithDescription("Shows an embed of the current Server POP/restart time")
+                .AddOption(new SlashCommandOptionBuilder()
+                .WithName("servername")
+                .WithDescription("The name of the servermap")
+                .WithRequired(true)
+                .AddChoice("Chernarus", Servers.CString)
+                .AddChoice("Namalsk", Servers.NString)
+                .WithType(ApplicationCommandOptionType.String)
 
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                            services: null);
-        }
-
-        private async Task HandleCommandAsync(SocketMessage messageParam)
-        {
-            // Don't process the command if it was a system message
-            var message = messageParam as SocketUserMessage;
-            if (message == null) return;
-
-            // Create a number to track where the prefix ends and the command begins
-            int argPos = 0;
-
-            // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasCharPrefix('!', ref argPos) ||
-                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
-                message.Author.IsBot)
-                return;
-
-            // Create a WebSocket-based command context based on the message
-            var context = new SocketCommandContext(_client, message);
-
-            // Execute the command with the command context we just
-            // created, along with the service provider for precondition checks.
-            await _commands.ExecuteAsync(
-                context: context,
-                argPos: argPos,
-                services: null);
+                );
+            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
+            globalcommand.WithName("saveserverinfo")
+                .WithDescription("Saves ServerInfo to File. (Admins Only)");
+            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
         }
 
         private Task Log(LogMessage msg)
@@ -138,19 +182,26 @@ namespace DSSU
 
         public async void ServerStatusCheck(Object stateInfo)
         {
-            if (ServerInfoEmbed.mymessages == null)
+            if (InteractionHelp.mymessages == null)
                 return;
             Logger.Log("Checking Server Status");
             try
             {
-                foreach (var item in ServerInfoEmbed.mymessages)
+                foreach (var item in InteractionHelp.mymessages)
                 {
+                    Console.WriteLine("this works");
                     var message = item.Key;
                     var embed = item.Value.EmbedBuilder;
                     var fieldbuiler = item.Value.EmbedFieldBuilder;
                     var info = Steam.IGameServersService.CSERVER(item.Value.IP);
-                    ServerInfoEmbed.GetCorrectRestartTimes(item.Value.MapName);
-                    fieldbuiler.WithValue(SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(ServerInfoEmbed.CurrentTimeSpans));
+                    Logger.Log(message);
+                    Logger.Log(embed);
+                    await InteractionHelp.GetCorrectRestartTimes(item.Value.MapName);
+                    if (item.Value.MapName.Contains("Namalsk"))
+                        InteractionHelp.is4hours = true;
+                    else
+                        InteractionHelp.is4hours = false;
+                    fieldbuiler.WithValue(SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(InteractionHelp.CurrentTimeSpans, InteractionHelp.is4hours));
                     if (info == null)
                     {
                         Logger.Log($"Server with IP:{embed.Description} is offline");
@@ -161,18 +212,19 @@ namespace DSSU
                             max_players = 0,
                             addr = embed.Description
                         };
+                        item.Value.Offline = true;
                     }
                     if (item.Value.Offline)
                     {
                         Logger.Log($"{embed.Description} is offline checking if it has a player account");
                         if (info.max_players >= 0)
                         {
-                            embed = ServerInfoEmbed.Builder(embed, fieldbuiler, info, item.Value.IP);
+                            embed = InteractionHelp.Builder(embed, fieldbuiler, info, item.Value.IP);
                             item.Value.Offline = false;
                         }
                     }
                     embed.Author.Name = info.name;
-                    embed = ServerInfoEmbed.Builder(embed, fieldbuiler, info, item.Value.IP);
+                    embed = InteractionHelp.Builder(embed, fieldbuiler, info, item.Value.IP);
                     await message.ModifyAsync(x => x.Embed = embed.Build());
                     Logger.Log($"Updated Server Info of {info.name}");
                     await Task.Delay(3000);
@@ -185,6 +237,15 @@ namespace DSSU
                 await dm.SendMessageAsync(text: g.Message);
                 Logger.Log(g.Message);
             }
+        }
+
+        public static bool IsDebug()
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }

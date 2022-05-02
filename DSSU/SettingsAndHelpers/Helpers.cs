@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using DSSU.Interactions;
 
 namespace DSSU.SettingsAndHelpers.Helpers
 {
@@ -30,16 +31,16 @@ namespace DSSU.SettingsAndHelpers.Helpers
                     {
                         info = new Steam.Server()
                         {
-                            name = $"{Commands.ServerInfoEmbed.embed.Author} is Currently Offline",
+                            name = $"{InteractionHelp.embed.Author} is Currently Offline",
                             players = 0,
                             max_players = 0,
-                            addr = Commands.ServerInfoEmbed.embed.Description
+                            addr = InteractionHelp.embed.Description
                         };
                         IsOffline = true;
                     }
                     IsOffline = false;
-                    Commands.ServerInfoEmbed.Builder(Commands.ServerInfoEmbed.embed, Commands.ServerInfoEmbed.embedField, info, item.Description);
-                    Commands.ServerInfoEmbed.mymessages.Add(message, Commands.ServerInfoEmbed.GetDiscordMessage(Commands.ServerInfoEmbed.embed, Commands.ServerInfoEmbed.embedField, info, item.Description, "", IsOffline));
+                    InteractionHelp.Builder(InteractionHelp.embed, InteractionHelp.embedField, info, item.Description);
+                    InteractionHelp.mymessages.Add(message, InteractionHelp.GetDiscordMessage(InteractionHelp.embed, InteractionHelp.embedField, info, item.Description, "", IsOffline));
                 }
             }
         }
@@ -65,6 +66,7 @@ namespace DSSU.SettingsAndHelpers.Helpers
                         return true;
 
                     case 3:
+
                         return true;
                 }
             }
@@ -119,32 +121,30 @@ namespace DSSU.SettingsAndHelpers.Helpers
             return null;
         }
 
-        public static string GetRestartTime() => HowMuchTimeTillRestart(NamalskRestartTime);
-
         //Converts to local time and then adding one hour, Timezones be damned
         public static TimeSpan ConvertToLocalTime(string time)
         {
             if (time == "00:00" && DateTime.Now.Hour != 0)
             {
                 Console.WriteLine(1);
-                return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1).Add(TimeSpan.FromDays(1)));
+                return TimeSpan.Parse(time).Add(TimeSpan.FromDays(1));
             }
             else if (time == "00:00" && DateTime.Now.Hour == 0)
             {
                 Console.WriteLine(2);
-                return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1));
+                return TimeSpan.Parse(time);
             }
 
-            return TimeSpan.Parse(time).Add(TimeSpan.FromHours(1));
+            return TimeSpan.Parse(time);
         }
 
         private static TimeSpan dt;
 
-        public static string HowMuchTimeTillRestart(TimeSpan[] restarttimes)
+        public static string HowMuchTimeTillRestart(TimeSpan[] restarttimes, bool is4hourrestart)
         {
             if (IsTimeLessThan3Hours(restarttimes))
             {
-                var t = GetTimeWhichIsLessThan3Hours(restarttimes, true);
+                var t = GetTimeWhichIsLessThan3Hours(restarttimes, is4hourrestart);
                 if (t == null)
                     return String.Empty;
                 Console.WriteLine(Math.Round(t.Value.TotalHours));
@@ -162,7 +162,7 @@ namespace DSSU.SettingsAndHelpers.Helpers
                 return "Couldnt Get Restart Time";
         }
 
-        public static TimeSpan[] ChernarusRestartTime { get; } = {
+        public static TimeSpan[] ChernarusRestartTime { get; } ={
             ConvertToLocalTime("00:00"), ConvertToLocalTime("03:00"),
             ConvertToLocalTime("06:00"), ConvertToLocalTime("09:00"),
             ConvertToLocalTime("12:00"), ConvertToLocalTime("15:00"),

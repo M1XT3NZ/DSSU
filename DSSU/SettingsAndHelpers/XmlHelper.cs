@@ -12,7 +12,8 @@ namespace DSSU
 
         private static XDocument doc;
 
-        private static readonly List<string> ApplicationSettings = new List<string> { nameof(Settings.SteamAPIKEY), nameof(Settings.DiscordToken),
+        private static readonly List<string> ApplicationSettings = new List<string> {
+            nameof(Settings.SteamAPIKEY), nameof(Settings.DiscordToken),
             nameof(Settings.HelpCommandTimeout), nameof(Settings.ServerCommandTimeout)
         };
 
@@ -30,39 +31,6 @@ namespace DSSU
 
             return false;
         }
-
-        //public static void SaveAllSettings()
-        //{
-        //    if (!DoesSettingsFileExist())
-        //        CreateSettingsFile();
-
-        //    foreach (var item in ApplicationSettings)
-        //    {
-        //        switch (item)
-        //        {
-        //            case nameof(Settings.SteamAPIKEY):
-        //                CreateSettingIfDoesNotExist(item);
-        //                doc.Save(XmlPath);
-        //                break;
-
-        //            case nameof(Settings.DiscordToken):
-        //                CreateSettingIfDoesNotExist(item);
-        //                doc.Save(XmlPath);
-        //                break;
-
-        //            case nameof(Settings.HelpCommandTimeout):
-        //                CreateSettingIfDoesNotExist(item);
-        //                doc.Save(XmlPath);
-        //                break;
-
-        //            case nameof(Settings.ServerCommandTimeout):
-        //                CreateSettingIfDoesNotExist(item);
-        //                doc.Save(XmlPath);
-        //                break;
-        //        }
-        //    }
-        //    doc.Save(XmlPath);
-        //}
 
         public static void CreateSettingsFile()
         {
@@ -171,7 +139,7 @@ namespace DSSU
         {
             if ((string)GetApplicationSetting(nameof(Settings.SteamAPIKEY)) == Settings.SteamAPIKEY)
             {
-                Logger.Log("This shouldnt have happened :(");
+                Logger.Log("Could not load settings");
                 return;
             }
             Settings.DiscordToken = (string)GetApplicationSetting(nameof(Settings.DiscordToken));
