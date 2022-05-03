@@ -22,10 +22,6 @@ namespace DSSU.Interactions.CommandInteractions
         string ServerName
    )
         {
-            if (!Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
-                return;
-
-            //Checks if the Channel is either the Karma Krew server-status channel or the one in my private testing area
             var MapName = "";
             switch (ServerName)
             {
@@ -101,8 +97,6 @@ namespace DSSU.Interactions.CommandInteractions
         [SlashCommand("saveserverinfo", "This will save the current servers of serverinfo")]
         public async Task SaveServerInfoAsync()
         {
-            if (!Helpers.HasManageServerPermission(Context.Guild.GetUser(Context.User.Id)))
-                return;
             JsonHelper.Json.SetJson();
         }
     }
