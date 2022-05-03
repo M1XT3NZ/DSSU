@@ -51,7 +51,7 @@ namespace DSSU
             }
             XmlHelper.CheckIfSettingsExists();
             XmlHelper.LoadSettings();
-
+            //300000
             _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
 
             _client = _services.GetRequiredService<DiscordSocketClient>();
@@ -67,7 +67,7 @@ namespace DSSU
             // Bot token can be provided from the Configuration object we set up earlier
             await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
             await _client.StartAsync();
-
+            var t = InteractionHelp.embed;
             // Never quit the program until manually forced to.
             await Task.Delay(Timeout.Infinite);
 
@@ -116,29 +116,6 @@ namespace DSSU
             return Task<Task>.CompletedTask;
         }
 
-        private async Task SetupCommands()
-        {
-            var globalcommand = new SlashCommandBuilder();
-            globalcommand.WithName("getserverinfo")
-                .WithDescription("This will create an embed of the specified server that gets refreshed every 5 minutes");
-            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
-            globalcommand.WithName("server")
-                .WithDescription("Shows an embed of the current Server POP/restart time")
-                .AddOption(new SlashCommandOptionBuilder()
-                .WithName("servername")
-                .WithDescription("The name of the servermap")
-                .WithRequired(true)
-                .AddChoice("Chernarus", Servers.CString)
-                .AddChoice("Namalsk", Servers.NString)
-                .WithType(ApplicationCommandOptionType.String)
-
-                );
-            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
-            globalcommand.WithName("saveserverinfo")
-                .WithDescription("Saves ServerInfo to File. (Admins Only)");
-            await _client.CreateGlobalApplicationCommandAsync(globalcommand.Build());
-        }
-
         private Task Log(LogMessage msg)
         {
             switch (msg.Severity)
@@ -178,6 +155,8 @@ namespace DSSU
             return Task.CompletedTask;
         }
 
+        private EmbedBuilder b = new EmbedBuilder();
+
         public async void ServerStatusCheck(Object stateInfo)
         {
             if (InteractionHelp.mymessages == null)
@@ -189,41 +168,50 @@ namespace DSSU
                 {
                     Console.WriteLine("this works");
                     var message = item.Key;
-                    var embed = item.Value.EmbedBuilder;
                     var fieldbuiler = item.Value.EmbedFieldBuilder;
                     var info = Steam.IGameServersService.CSERVER(item.Value.IP);
-                    Logger.Log(message);
-                    Logger.Log(embed);
+                    Logger.Log(item.Value.MapName);
                     await InteractionHelp.GetCorrectRestartTimes(item.Value.MapName);
                     if (item.Value.MapName.Contains("Namalsk"))
                         InteractionHelp.is4hours = true;
                     else
                         InteractionHelp.is4hours = false;
-                    fieldbuiler.WithValue(SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(InteractionHelp.CurrentTimeSpans, InteractionHelp.is4hours));
+                    //if (fieldbuiler == null)
+                    //{
+                    //    fieldbuiler = InteractionHelp.Builder(item.Value.EmbedFieldBuilder, InteractionHelp.CurrentTimeSpans, InteractionHelp.is4hours);
+                    //    fieldbuiler.WithValue(SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(InteractionHelp.CurrentTimeSpans, InteractionHelp.is4hours));
+                    //}
+
                     if (info == null)
                     {
-                        Logger.Log($"Server with IP:{embed.Description} is offline");
+                        Logger.Log($"Server with IP:{b.Description} is offline");
                         info = new Steam.Server()
                         {
-                            name = $"{embed.Author} is Currently Offline",
+                            name = $"{b.Author} is Currently Offline",
                             players = 0,
                             max_players = 0,
-                            addr = embed.Description
+                            addr = b.Description
                         };
                         item.Value.Offline = true;
                     }
                     if (item.Value.Offline)
                     {
-                        Logger.Log($"{embed.Description} is offline checking if it has a player account");
+                        Logger.Log($"{b.Description} is offline checking if it has a player account");
                         if (info.max_players >= 0)
                         {
-                            embed = InteractionHelp.Builder(embed, fieldbuiler, info, item.Value.IP);
+                            b = InteractionHelp.Builder(b, fieldbuiler, info, item.Value.IP);
                             item.Value.Offline = false;
                         }
                     }
-                    embed.Author.Name = info.name;
-                    embed = InteractionHelp.Builder(embed, fieldbuiler, info, item.Value.IP);
-                    await message.ModifyAsync(x => x.Embed = embed.Build());
+                    if (info != null)
+                        b.WithAuthor(info.name);
+                    fieldbuiler = InteractionHelp.embedField = InteractionHelp.Builder(InteractionHelp.embedField, InteractionHelp.CurrentTimeSpans, InteractionHelp.is4hours);
+                    b = InteractionHelp.Builder(b, fieldbuiler, info, item.Value.IP);
+                    var buildembed = b.Build();
+                    await message.ModifyAsync(x =>
+                    {
+                        x.Embed = buildembed;
+                    });
                     Logger.Log($"Updated Server Info of {info.name}");
                     await Task.Delay(3000);
                 }

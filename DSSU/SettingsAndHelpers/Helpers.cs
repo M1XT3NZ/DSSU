@@ -13,7 +13,7 @@ namespace DSSU.SettingsAndHelpers.Helpers
 
         public static bool IsOffline = false;
 
-        public static async void LoadMessage(ulong messageid, ulong textchannel, ulong GuildID, string serverip)
+        public static async void LoadMessage(ulong messageid, ulong textchannel, ulong GuildID, string serverip, string mapname)
         {
             await Task.Delay(10000);//Delaying to wait For the Data to load
             var guild = Program._client.GetGuild(GuildID);
@@ -39,8 +39,8 @@ namespace DSSU.SettingsAndHelpers.Helpers
                         IsOffline = true;
                     }
                     IsOffline = false;
-                    InteractionHelp.Builder(InteractionHelp.embed, InteractionHelp.embedField, info, item.Description);
-                    InteractionHelp.mymessages.Add(message, InteractionHelp.GetDiscordMessage(InteractionHelp.embed, InteractionHelp.embedField, info, item.Description, "", IsOffline));
+                    InteractionHelp.mymessages.Add(message, InteractionHelp.GetDiscordMessage(InteractionHelp.Builder(InteractionHelp.embed, InteractionHelp.embedField, info, item.Description), InteractionHelp.embedField, info, item.Description, mapname, IsOffline));
+                    Logger.Log("Added Message");
                 }
             }
         }

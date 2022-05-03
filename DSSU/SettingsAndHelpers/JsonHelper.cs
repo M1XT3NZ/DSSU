@@ -29,12 +29,12 @@ namespace DSSU.JsonHelper
                         switch (guilds.Name)
                         {
                             case "KarmaKrew - DayZ Modded":
-                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId, item.IP);
+                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.KarmaKrewTextChannelID, SettingsAndHelpers.Settings.KarmaKrewGuildId, item.IP, item.MapName);
                                 Logger.Log("KarmaKrew Discord");
                                 break;
 
                             case "Testing":
-                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId, item.IP);
+                                Helpers.LoadMessage(item.Id, SettingsAndHelpers.Settings.PrivateTextChannelID, SettingsAndHelpers.Settings.PrivateGuildId, item.IP, item.MapName);
                                 Logger.Log("Testing Discord");
                                 break;
 

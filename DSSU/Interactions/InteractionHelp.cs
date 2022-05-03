@@ -7,10 +7,13 @@ namespace DSSU.Interactions
     public class InteractionHelp
     {
         public static TimeSpan[] CurrentTimeSpans { get; set; }
+
         public static EmbedBuilder embed = new EmbedBuilder();
+
         public static EmbedFieldBuilder embedField = new EmbedFieldBuilder();
 
         public static Dictionary<IUserMessage, DiscordMessages> mymessages = new Dictionary<IUserMessage, DiscordMessages>();
+
         public static ObservableCollection<Messageid> MessagIDs = new ObservableCollection<Messageid>();
 
         public static bool is4hours;
@@ -81,7 +84,7 @@ namespace DSSU.Interactions
 
     public class DiscordMessages
     {
-        public EmbedBuilder? EmbedBuilder { get; set; }
+        public EmbedBuilder EmbedBuilder { get; set; }
         public EmbedFieldBuilder? EmbedFieldBuilder { get; set; }
         public string MapName { get; set; }
         public Steam.Server? Info { get; set; }
@@ -93,6 +96,7 @@ namespace DSSU.Interactions
     {
         public string? Name { get; set; }
         public ulong Id { get; set; }
+        public string MapName { set; get; }
 
         public string IP { get; set; }
     }

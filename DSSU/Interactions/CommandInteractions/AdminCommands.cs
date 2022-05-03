@@ -27,14 +27,14 @@ namespace DSSU.Interactions.CommandInteractions
             {
                 case string str when str.Equals(Servers.NString, StringComparison.InvariantCultureIgnoreCase):
                     await InteractionHelp.GetCorrectRestartTimes(nameof(Servers.Namalsk));
-                    MapName = nameof(Servers.Namalsk);
+                    MapName = Servers.NString;
                     InteractionHelp.is4hours = true;
                     InteractionHelp.ServerIP = Servers.Namalsk.Trim();
                     InteractionHelp.Info = Steam.IGameServersService.CSERVER(Servers.Namalsk);
                     break;
 
                 case string str when str.Equals(Servers.CString, StringComparison.InvariantCultureIgnoreCase):
-                    MapName = nameof(Servers.Chernarus);
+                    MapName = Servers.CString;
                     InteractionHelp.is4hours = false;
                     await InteractionHelp.GetCorrectRestartTimes(nameof(Servers.Chernarus));
                     InteractionHelp.ServerIP = Servers.Chernarus.Trim();
@@ -81,13 +81,17 @@ namespace DSSU.Interactions.CommandInteractions
 
             var t = await ReplyAsync(embed: InteractionHelp.embed.Build()/*, components: builder.Build()*/);
             await DeleteOriginalResponseAsync();
-
+            foreach (var item in t.Embeds)
+            {
+                Logger.Log(item.Author);
+            }
             InteractionHelp.mymessages.Add(t, InteractionHelp.ms);
 
             Messageid messageid = new Messageid()
             {
                 Name = InteractionHelp.Info.name,
                 Id = t.Id,
+                MapName = MapName,
                 IP = serverIP,
             };
             InteractionHelp.MessagIDs.Add(messageid);
