@@ -41,34 +41,32 @@ namespace DSSU
 
         public async Task MainAsync()
         {
-            //var autoEvent = new AutoResetEvent(false);
-            //if (!XmlHelper.DoesSettingsFileExist())
-            //{
-            //    XmlHelper.CreateSettingsFile();
-            //    Logger.Log("Please Fill in the Token and API Key in the Settings.xml");
-            //    Logger.Log("After you have entered both the Token and the API Key press any key");
-            //    Console.Read();
-            //}
-            //XmlHelper.CheckIfSettingsExists();
-            //XmlHelper.LoadSettings();
+            var autoEvent = new AutoResetEvent(false);
+            if (!XmlHelper.DoesSettingsFileExist())
+            {
+                XmlHelper.CreateSettingsFile();
+                Logger.Log("Please Fill in the Token and API Key in the Settings.xml");
+                Logger.Log("After you have entered both the Token and the API Key press any key");
+                Console.Read();
+            }
+            XmlHelper.CheckIfSettingsExists();
+            XmlHelper.LoadSettings();
 
-            //_timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
+            _timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
 
-            //_client = _services.GetRequiredService<DiscordSocketClient>();
+            _client = _services.GetRequiredService<DiscordSocketClient>();
 
-            //_client.Log += Log;
-            //_client.Ready += _client_Ready;
-            //_client.Disconnected += _client_Disconnected;
+            _client.Log += Log;
+            _client.Ready += _client_Ready;
+            _client.Disconnected += _client_Disconnected;
 
-            //// Here we can initialize the service that will register and execute our commands
-            //await _services.GetRequiredService<InteractionHandler>()
-            //    .InitializeAsync();
+            // Here we can initialize the service that will register and execute our commands
+            await _services.GetRequiredService<InteractionHandler>()
+                .InitializeAsync();
 
-            //// Bot token can be provided from the Configuration object we set up earlier
-            //await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
-            //await _client.StartAsync();
-            SettingsAndHelpers.Helpers.Helpers.HowMuchTimeTillRestart(SettingsAndHelpers.Helpers.Helpers.ChernarusRestartTime, false);
-            //Console.WriteLine("test " + SettingsAndHelpers.Helpers.Helpers.restart);
+            // Bot token can be provided from the Configuration object we set up earlier
+            await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
+            await _client.StartAsync();
 
             // Never quit the program until manually forced to.
             await Task.Delay(Timeout.Infinite);
