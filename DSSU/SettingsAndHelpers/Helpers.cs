@@ -150,12 +150,12 @@ namespace DSSU.SettingsAndHelpers.Helpers
                 Console.WriteLine(Math.Round(t.Value.TotalHours));
                 if (Math.Round(t.Value.TotalHours, 0, MidpointRounding.ToZero) == 0)
                 {
-                    return $"Time Till Restart {t:%m} Minutes.";
+                    return $"{t:%m} Minute(s).";
                 }
                 else
                 {
                     dt += (TimeSpan)t;
-                    return $"Time Till Restart {t:%h} hour(s) and {t:mm} minutes.";
+                    return $"{t:%h} hour(s) and {t:mm} minute(s).";
                 }
             }
             else

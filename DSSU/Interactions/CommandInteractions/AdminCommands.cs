@@ -6,6 +6,7 @@ namespace DSSU.Interactions.CommandInteractions
     public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
     {
         public InteractionService Commands { get; set; }
+
         private InteractionHandler _handler;
 
         // Constructor injection is also a valid way to access the dependencies

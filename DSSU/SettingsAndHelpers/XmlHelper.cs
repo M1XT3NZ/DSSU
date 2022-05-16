@@ -14,7 +14,8 @@ namespace DSSU
 
         private static readonly List<string> ApplicationSettings = new List<string> {
             nameof(Settings.SteamAPIKEY), nameof(Settings.DiscordToken),
-            nameof(Settings.HelpCommandTimeout), nameof(Settings.ServerCommandTimeout)
+            nameof(Servers.Chernarus), nameof(Servers.Namalsk),
+            nameof(Servers.Esseker)
         };
 
         public static bool DoesSettingsFileExist()
@@ -43,9 +44,9 @@ namespace DSSU
                             new XComment("//Steam Web API Key: https://steamcommunity.com/dev/apikey"),
                             new XComment("DiscordToken is the Token from your bot: https://discord.com/developers/applications "),
                             new XElement(nameof(Settings.DiscordToken), Settings.DiscordToken),
-                            new XComment("Value for the Timeout is in minutes so, 5 is 5 Minutes"),
-                            new XElement(nameof(Settings.HelpCommandTimeout), Settings.HelpCommandTimeout),
-                            new XElement(nameof(Settings.ServerCommandTimeout), Settings.ServerCommandTimeout)
+                            new XComment("Current IPs for the Servers!!! "),
+                            new XElement(nameof(Servers.Namalsk), Servers.Namalsk),
+                            new XElement(nameof(Servers.Chernarus), Servers.Chernarus)
                         )
                     )
                 );
@@ -121,13 +122,18 @@ namespace DSSU
                         doc.Save(XmlPath);
                         break;
 
-                    case nameof(Settings.HelpCommandTimeout):
-                        CreateSettingIfDoesNotExist(item, Settings.HelpCommandTimeout);
+                    case nameof(Servers.Namalsk):
+                        CreateSettingIfDoesNotExist(item, Servers.Namalsk);
                         doc.Save(XmlPath);
                         break;
 
-                    case nameof(Settings.ServerCommandTimeout):
-                        CreateSettingIfDoesNotExist(item, Settings.ServerCommandTimeout);
+                    case nameof(Servers.Chernarus):
+                        CreateSettingIfDoesNotExist(item, Servers.Chernarus);
+                        doc.Save(XmlPath);
+                        break;
+
+                    case nameof(Servers.Esseker):
+                        CreateSettingIfDoesNotExist(item, Servers.Esseker);
                         doc.Save(XmlPath);
                         break;
                 }
@@ -144,8 +150,8 @@ namespace DSSU
             }
             Settings.DiscordToken = (string)GetApplicationSetting(nameof(Settings.DiscordToken));
             Settings.SteamAPIKEY = (string)GetApplicationSetting(nameof(Settings.SteamAPIKEY));
-            Settings.HelpCommandTimeout = int.Parse((string)GetApplicationSetting(nameof(Settings.HelpCommandTimeout)));
-            Settings.ServerCommandTimeout = int.Parse((string)GetApplicationSetting(nameof(Settings.ServerCommandTimeout)));
+            Servers.Chernarus = (string)GetApplicationSetting(nameof(Servers.Chernarus));
+            Servers.Namalsk = (string)GetApplicationSetting(nameof(Servers.Namalsk));
         }
     }
 }
