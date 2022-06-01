@@ -19,7 +19,8 @@ namespace DSSU.Interactions.CommandInteractions
         [SlashCommand("serverinfo", "Creates a Serverinfo Embed that updates every 5 minutes")]
         public async Task MServerInfoAsync(
         [Choice("Chernarus", Servers.CString)]
-        [Choice("Namalsk",Servers.NString)]
+       // [Choice("Namalsk",Servers.NString)]
+        [Choice("Esseker",Servers.EString)]
         string ServerName
    )
         {
@@ -43,8 +44,13 @@ namespace DSSU.Interactions.CommandInteractions
                     break;
 
                 case string str when str.Equals(Servers.EString, StringComparison.InvariantCultureIgnoreCase):
+                    MapName = Servers.CString;
+                    InteractionHelp.is4hours = true;
+                    InteractionHelp.Info = Steam.IGameServersService.CSERVER(Servers.Esseker);
 
-                    Logger.Log("Well that doesnt exist yet ^_____^");
+                    await InteractionHelp.GetCorrectRestartTimes(nameof(Servers.Esseker));
+                    InteractionHelp.ServerIP = Servers.Esseker.Trim();
+
                     //Info = Steam.IGameServersService.CSERVER(Servers.Esseker);
                     break;
 

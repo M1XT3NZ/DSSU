@@ -44,9 +44,10 @@ namespace DSSU
                             new XComment("//Steam Web API Key: https://steamcommunity.com/dev/apikey"),
                             new XComment("DiscordToken is the Token from your bot: https://discord.com/developers/applications "),
                             new XElement(nameof(Settings.DiscordToken), Settings.DiscordToken),
-                            new XComment("Current IPs for the Servers!!! "),
+                            new XComment("Current IPs for the Servers!!!"),
                             new XElement(nameof(Servers.Namalsk), Servers.Namalsk),
-                            new XElement(nameof(Servers.Chernarus), Servers.Chernarus)
+                            new XElement(nameof(Servers.Chernarus), Servers.Chernarus),
+                            new XElement(nameof(Servers.Esseker), Servers.Esseker)
                         )
                     )
                 );
@@ -152,6 +153,7 @@ namespace DSSU
             Settings.SteamAPIKEY = (string)GetApplicationSetting(nameof(Settings.SteamAPIKEY));
             Servers.Chernarus = (string)GetApplicationSetting(nameof(Servers.Chernarus));
             Servers.Namalsk = (string)GetApplicationSetting(nameof(Servers.Namalsk));
+            Servers.Esseker = (string)GetApplicationSetting(nameof(Servers.Esseker));
         }
     }
 }

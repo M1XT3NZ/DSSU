@@ -16,33 +16,43 @@ namespace Steam
 
         public static Server? CSERVER(string serverIP)
         {
-            var servers = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=A1CC5E94A57074780CE9DA8D3F7AD829&filter=\gameaddr\{serverIP}&limit=6320");
-
-            if (servers == null)
-                return null;
-            var info = servers.Result.FirstOrDefault();
-
-            if (info == null) return null;
-            Server server = new Server()
+            Server server = new();
+            try
             {
-                players = info.players,
-                max_players = info.max_players,
-                addr = info.addr,
-                secure = info.secure,
-                steamid = info.steamid,
-                appid = info.appid,
-                bots = info.bots,
-                dedicated = info.dedicated,
-                gamedir = info.gamedir,
-                gametype = info.gametype,
-                map = info.map,
-                name = info.name,
-                os = info.os,
-                port = info.port,
-                product = info.product,
-                region = info.region,
-                version = info.version
-            };
+                var servers = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=A1CC5E94A57074780CE9DA8D3F7AD829&filter=\gameaddr\{serverIP}&limit=6320");
+                if (servers == null)
+                    return null;
+                var info = servers.Result.FirstOrDefault();
+
+                if (info == null) return null;
+                server = new Server()
+                {
+                    players = info.players,
+                    max_players = info.max_players,
+                    addr = info.addr,
+                    secure = info.secure,
+                    steamid = info.steamid,
+                    appid = info.appid,
+                    bots = info.bots,
+                    dedicated = info.dedicated,
+                    gamedir = info.gamedir,
+                    gametype = info.gametype,
+                    map = info.map,
+                    name = info.name,
+                    os = info.os,
+                    port = info.port,
+                    product = info.product,
+                    region = info.region,
+                    version = info.version
+                };
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+           
+
+
             return server;
         }
     }

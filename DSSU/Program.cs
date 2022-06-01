@@ -70,36 +70,6 @@ namespace DSSU
             var t = InteractionHelp.embed;
             // Never quit the program until manually forced to.
             await Task.Delay(Timeout.Infinite);
-
-            //_timer = new Timer(ServerStatusCheck, autoEvent, 0, 300000);
-            //_client = new DiscordSocketClient();
-            //_commands = new CommandService(new CommandServiceConfig
-            //{
-            //    CaseSensitiveCommands = false,
-            //});
-            //_client.Log += Log;
-            //_commands.Log += Log;
-
-            //await InstallCommandsAsync();
-
-            //await _client.LoginAsync(TokenType.Bot, SettingsAndHelpers.Settings.DiscordToken);
-
-            //await _client.StartAsync();
-            //_client.Ready += () =>
-            //{
-            //    Logger.Log("Bot is connected!");
-            //    return Task.CompletedTask;
-            //};
-
-            //_client.Ready += _client_Ready;
-            //_client.Disconnected += _client_Disconnected;
-            //while (!IsReady)
-            //{
-            //    Task.Delay(1000);
-            //}
-            //await SetupCommands();
-            //_client.SlashCommandExecuted += Commands.ServerInfoEmbed._client_SlashCommandExecuted;
-            // Block this task until the program is closed.
         }
 
         private Task _client_Disconnected(Exception arg)
@@ -166,7 +136,6 @@ namespace DSSU
             {
                 foreach (var item in InteractionHelp.mymessages)
                 {
-                    Console.WriteLine("this works");
                     var message = item.Key;
                     var fieldbuiler = item.Value.EmbedFieldBuilder;
                     var info = Steam.IGameServersService.CSERVER(item.Value.IP);

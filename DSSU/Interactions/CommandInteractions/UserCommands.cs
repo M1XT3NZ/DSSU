@@ -47,8 +47,10 @@ namespace DSSU.Interactions.CommandInteractions
                     break;
 
                 case string str when str.Equals(Servers.EString, StringComparison.InvariantCultureIgnoreCase):
-
-                    Logger.Log("Well that doesnt exist yet ^_____^");
+                    await InteractionHelp.GetCorrectRestartTimes(Servers.NString);
+                    InteractionHelp.is4hours = true;
+                    InteractionHelp.ServerIP = Servers.Esseker.Trim();
+                    InteractionHelp.Info = Steam.IGameServersService.CSERVER(Servers.Esseker);
                     //Info = Steam.IGameServersService.CSERVER(Servers.Esseker);
                     break;
 
@@ -75,6 +77,7 @@ namespace DSSU.Interactions.CommandInteractions
 
             await DeferAsync();
             var t = await ReplyAsync(embed: InteractionHelp.embed.Build()/*, components: builder.Build()*/);
+            Logger.Log($"{Context.Client}");
             await DeleteOriginalResponseAsync();
             //await ReplyAsync(embed: embed.Build());
         }

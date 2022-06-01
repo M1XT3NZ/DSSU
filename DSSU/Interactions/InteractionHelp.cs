@@ -75,7 +75,7 @@ namespace DSSU.Interactions
 
                 case string str when str.Equals(Servers.EString, StringComparison.InvariantCultureIgnoreCase):
 
-                    Logger.Log("Well that doesnt exist yet ^_____^");
+                    CurrentTimeSpans = Helpers.NamalskRestartTime;
 
                     break;
             }
