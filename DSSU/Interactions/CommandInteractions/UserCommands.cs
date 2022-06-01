@@ -17,7 +17,7 @@ namespace DSSU.Interactions.CommandInteractions
         [SlashCommand("server", "Shows Current Info of the server and an Estimated Server Restart time.")]
         public async Task SingleServerInfoAsync(
         [Choice("Chernarus", Servers.CString)]
-        [Choice("Namalsk",Servers.NString)]
+        [Choice("Esseker",Servers.EString)]
         string ServerName)
         {
             //Checks if the Channel is either the Karma Krew General channel or the one in my private testing area
