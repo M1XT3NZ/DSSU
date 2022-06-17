@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace DSSU
 {
-    internal class XmlHelper
+    public static class XmlHelper
     {
         private static string XmlPath = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml");
 

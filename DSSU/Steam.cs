@@ -19,7 +19,7 @@ namespace Steam
             Server server = new();
             try
             {
-                var servers = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=A1CC5E94A57074780CE9DA8D3F7AD829&filter=\gameaddr\{serverIP}&limit=6320");
+                var servers = GetServerList($@"https://api.steampowered.com/IGameServersService/GetServerList/v1/?key={DSSU.SettingsAndHelpers.Settings.SteamAPIKEY}&filter=\gameaddr\{serverIP}&limit=6320");
                 if (servers == null)
                     return null;
                 var info = servers.Result.FirstOrDefault();
@@ -50,8 +50,6 @@ namespace Steam
             {
                 return null;
             }
-           
-
 
             return server;
         }
